@@ -47,33 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCR48HqsG9b-ctuAezoGRKf2H-6puIvhEU',
-    appId: '1:123420150589:web:2619be4e9077e8dc135354',
-    messagingSenderId: '123420150589',
-    projectId: 'devwithwells',
-    authDomain: 'devwithwells.firebaseapp.com',
-    databaseURL: 'https://devwithwells-default-rtdb.firebaseio.com',
-    storageBucket: 'devwithwells.appspot.com',
-    measurementId: 'G-ZLLX1HC81N',
+    apiKey: 'AIzaSyBbeU5kSR7vSz5bTmUhnWKmvEtheR-yLv0',
+    appId: '1:1052417728796:web:20e2bdb1f44c7d28641ad9',
+    messagingSenderId: '1052417728796',
+    projectId: 'devwithwells-9c948',
+    authDomain: 'devwithwells-9c948.firebaseapp.com',
+    storageBucket: 'devwithwells-9c948.appspot.com',
+    measurementId: 'G-9JSX2C144F',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC9xpiRjSrCQcP-X-1DpSRdVgv1KIjzvLY',
-    appId: '1:123420150589:android:334c842e6f7fa0c7135354',
-    messagingSenderId: '123420150589',
-    projectId: 'devwithwells',
-    databaseURL: 'https://devwithwells-default-rtdb.firebaseio.com',
-    storageBucket: 'devwithwells.appspot.com',
+    apiKey: 'AIzaSyCc45bo1DYPzyxtUbjsbW89HLzqnAOzd-k',
+    appId: '1:1052417728796:android:06485d55410bc581641ad9',
+    messagingSenderId: '1052417728796',
+    projectId: 'devwithwells-9c948',
+    storageBucket: 'devwithwells-9c948.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD7zVIU_UEWNFNr1rxohLFVEMjOjfN3yj0',
-    appId: '1:123420150589:ios:72d55207becea6f9135354',
-    messagingSenderId: '123420150589',
-    projectId: 'devwithwells',
-    databaseURL: 'https://devwithwells-default-rtdb.firebaseio.com',
-    storageBucket: 'devwithwells.appspot.com',
-    iosClientId: '123420150589-c3hp6jmvlphlf7ses6hbcvn2bo5of1la.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBll00SPUIALGrdxI0Um-db-emGC4L3pFk',
+    appId: '1:1052417728796:ios:f91a59d5e61852e7641ad9',
+    messagingSenderId: '1052417728796',
+    projectId: 'devwithwells-9c948',
+    storageBucket: 'devwithwells-9c948.appspot.com',
+    iosClientId: '1052417728796-i4lkmcphkrbtcpf0pojuh0dov0aa7d5v.apps.googleusercontent.com',
     iosBundleId: 'com.example.withwells',
   );
 }

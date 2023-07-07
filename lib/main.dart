@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    name: 'DevWithWells',
     options: DefaultFirebaseOptions.currentPlatform,
   );
 

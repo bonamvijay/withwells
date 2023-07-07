@@ -13,6 +13,24 @@ class _AuthorizationScreenState extends State<AuthorizationScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_handleTextFieldChanged);
+    _passwordController.addListener(_handleTextFieldChanged);
+  }
+
+  void _handleTextFieldChanged() {
+    setState(() {}); // Trigger a rebuild to update the button state
+  }
+
   Future<void> _login() async {
     try {
       final String email = _emailController.text.trim();
@@ -83,17 +101,19 @@ class _AuthorizationScreenState extends State<AuthorizationScreen> {
             TextFormField(
               controller: _emailController,
               decoration: InputDecoration(labelText: 'Email'),
+              onEditingComplete: _handleEditingComplete,
             ),
             SizedBox(height: 20.0),
             TextFormField(
               controller: _passwordController,
               decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
+              onEditingComplete: _handleEditingComplete,
             ),
             SizedBox(height: 20.0),
             ElevatedButton(
               child: Text('Login'),
-              onPressed: _login,
+              onPressed: _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty ? _login : null,
             ),
             ElevatedButton(
               child: Text('Sign Up'),
@@ -103,6 +123,12 @@ class _AuthorizationScreenState extends State<AuthorizationScreen> {
         ),
       ),
     );
+  }
+
+  void _handleEditingComplete() {
+    if (_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
+      _login();
+    }
   }
 }
 

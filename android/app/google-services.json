@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1052417728796",
+    "project_id": "devwithwells-9c948",
+    "storage_bucket": "devwithwells-9c948.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1052417728796:android:06485d55410bc581641ad9",
+        "android_client_info": {
+          "package_name": "com.example.withwells"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1052417728796-h8r14e0h47r4uk6k9a3dbf5lh9uev6q9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCc45bo1DYPzyxtUbjsbW89HLzqnAOzd-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1052417728796-h8r14e0h47r4uk6k9a3dbf5lh9uev6q9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
