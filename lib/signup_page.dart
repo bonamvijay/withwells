@@ -103,7 +103,7 @@ class _SignUpPageState extends State<SignUpPage> {
           'ticket id' : '',
           'room id' : '',
           'ticket' : '',
-          'date n time' : ''
+          'datentime' : ''
           // Add additional user details here if needed
         });
 

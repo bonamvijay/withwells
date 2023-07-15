@@ -26,33 +26,41 @@ class _YourTicketsState extends State<YourTickets> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             DocumentSnapshot userSnapshot = snapshot.data as DocumentSnapshot;
-            Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
-            if (userData != null) {
-              List<dynamic> ticketIds = userData['ticket id'] ?? [];
-              List<dynamic> tickets = userData['ticket'] ?? [];
-              List<dynamic> dateTimes = userData['date n time'] ?? [];
+            Map<String, dynamic>? userData =
+            userSnapshot.data() as Map<String, dynamic>?;
 
-              // Handle the case where ticket information is stored as a string
-              if (tickets is String) {
-                ticketIds = [ticketIds];
-                tickets = [tickets];
-                dateTimes = [dateTimes];
-              }
+            if (userData != null) {
+              List<dynamic> tickets = userData['tickets'] ?? [];
+
+              tickets = List.from(tickets.reversed); // Reverse the order of tickets
 
               return ListView.builder(
-                itemCount: ticketIds.length,
+                itemCount: tickets.length,
                 itemBuilder: (context, index) {
-                  String ticketId = ticketIds[index].toString();
-                  String ticket = tickets[index].toString();
-                  String dateTime = dateTimes[index].toString();
+                  Map<String, dynamic> ticket = tickets[index];
+                  String ticketId = ticket['ticketId'].toString();
+                  List<dynamic> tableValues = ticket['tableValues'];
 
                   return ListTile(
                     title: Text('Ticket ID: $ticketId'),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Ticket: $ticket'),
-                        Text('Date & Time: $dateTime'),
+                        Text('Table Values:'),
+                        Container(
+                          color: Colors.grey[200], // Set the background color of the table
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Expanded(
+                              child: Table(
+                                border: TableBorder.all(), // Set the table border
+                                defaultColumnWidth: FixedColumnWidth(30.0), // Adjust the cell width as desired
+                                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                children: _buildTableRows(tableValues),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   );
@@ -70,6 +78,31 @@ class _YourTicketsState extends State<YourTickets> {
           }
         },
       ),
+    );
+  }
+
+  List<TableRow> _buildTableRows(List<dynamic> tableValues) {
+    List<TableRow> rows = [];
+    for (var row in tableValues) {
+      List<Widget> cells = [];
+      List<dynamic> rowValues = row['rowValues'];
+      for (var cellValue in rowValues) {
+        cells.add(_buildTableCell(cellValue));
+      }
+      rows.add(TableRow(children: cells));
+    }
+    return rows;
+  }
+
+  Widget _buildTableCell(dynamic cellValue) {
+    return Container(
+      padding: EdgeInsets.all(4.0), // Adjust the padding as desired
+      child: cellValue != -1
+          ? Text(
+        cellValue.toString(),
+        style: TextStyle(fontSize: 14.0), // Adjust the font size as desired
+      )
+          : SizedBox(width: 20.0, height: 20.0), // Adjust the size of empty cell as desired
     );
   }
 }

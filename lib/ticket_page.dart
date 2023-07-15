@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'RoomPage.dart';
 import 'authorization_screen.dart';
 import 'your_tickets.dart';
 
@@ -73,7 +74,7 @@ class _TicketPageState extends State<TicketPage> {
           if (tickets.length > 15) {
             tickets.removeAt(0);
           }
-          
+
           await FirebaseFirestore.instance
               .collection('users')
               .doc(userEmail)
@@ -139,8 +140,8 @@ class _TicketPageState extends State<TicketPage> {
     }
 
     int totalValues = columnCounts.reduce((a, b) => a + b);
-    if (totalValues > 17) {
-      int valuesToRemove = totalValues - 17;
+    if (totalValues > 16) {
+      int valuesToRemove = totalValues - 16;
       for (int k = 0; k < valuesToRemove; k++) {
         int rowIndex = Random().nextInt(3);
         int columnIndex;
@@ -194,11 +195,10 @@ class _TicketPageState extends State<TicketPage> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('With Wells'),
+        title: Text('Welcome ${userName.isNotEmpty ? userName : 'User'}'),
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
@@ -211,44 +211,71 @@ class _TicketPageState extends State<TicketPage> {
           padding: EdgeInsets.all(16.0),
           child: Stack(
             children: [
-              Align(
-                alignment: Alignment.topLeft,
+              Positioned(
+                top: 0,
+                left: 0,
+                height: 40,
+                width: 150,
                 child: ElevatedButton(
                   onPressed: () {
-                    //Navigator.push(
-                      //context,
-                      //MaterialPageRoute(builder: (context) => YourTickets(userEmail: widget.userEmail)),
-                    //);// Handle the Tickets button action
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RoomPage(roomId: '12345', invitedUsers: ['User1', 'User2']),
+                      ));// Handle the Tickets button action
                   },
-                  child: Text('Tickets'),
+                  child: Text('Create Room'),
                 ),
               ),
-              Column(
-                children: [
-                  SizedBox(height: 1.0),
-                  Text(
-                    'Hi ${userName.isNotEmpty ? userName : 'User'}',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  SizedBox(height: 5.0),
-                  Text(
-                    'Your Ticket ID: $ticketId',
-                    style: TextStyle(fontSize: 10),
-                  ),
-                  SizedBox(height: 50.0),
-                  Container(
-                    padding: EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFFE4E1),
-                      border: Border.all(color: Color(0xFFFFE4E1)),
-                    ),
-                    child: Table(
-                      border: TableBorder.all(color: Colors.black),
-                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                      children: _buildTableRows(),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Container(
+                  height: 40,
+                  width: 150,
+                  child: TextField(
+                    // Add your text field properties here
+                    decoration: InputDecoration(
+                      labelText: 'Enter Room ID',
+                      border: OutlineInputBorder(),
                     ),
                   ),
-                ],
+                ),
+              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Current Ticket ID: $ticketId',
+                      style: TextStyle(fontSize: 10),
+                    ),
+                    SizedBox(height: 5.0),
+                    Container(
+                      padding: EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFE4E1),
+                      ),
+                      child: Table(
+                        border: TableBorder.all(color: Colors.black),
+                        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                        children: _buildTableRows(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => YourTickets(userEmail: widget.userEmail)),
+                    );// Handle the Tickets button action
+                  },
+                  child: Text('Old Tickets'),
+                ),
               ),
             ],
           ),
@@ -256,6 +283,13 @@ class _TicketPageState extends State<TicketPage> {
       ),
     );
   }
+
+
+
+
+
+
+
 
 
   List<TableRow> _buildTableRows() {

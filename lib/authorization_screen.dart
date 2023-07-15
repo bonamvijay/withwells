@@ -115,6 +115,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen> {
               child: Text('Login'),
               onPressed: _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty ? _login : null,
             ),
+            SizedBox(height: 20.0),
             ElevatedButton(
               child: Text('Sign Up'),
               onPressed: _signup,
