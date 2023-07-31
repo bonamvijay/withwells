@@ -5,7 +5,6 @@ import 'RoomPage.dart';
 import 'authorization_screen.dart';
 import 'your_tickets.dart';
 
-
 class TicketPage extends StatefulWidget {
   final String userEmail;
 
@@ -16,10 +15,15 @@ class TicketPage extends StatefulWidget {
 }
 
 class _TicketPageState extends State<TicketPage> {
-  late String ticketId;
+  String? ticketId;
   String userName ='';
   List<List<int>> tableValues = [];
   List<List<bool>> cellTapStates = [];
+  List<String> invitedUsersEmails = [];
+  List<String> joiners = [];
+  bool isJoined = false;
+  String? roomId;
+  TextEditingController _roomIdController = TextEditingController();
 
   @override
   void initState() {
@@ -48,6 +52,7 @@ class _TicketPageState extends State<TicketPage> {
 
         if (userData != null) {
           var name = userData['name'];
+          userName = name;
           dynamic currentTicketIds = userData['ticket id'];
           dynamic currentTicketData = userData['tickets'];
 
@@ -89,7 +94,7 @@ class _TicketPageState extends State<TicketPage> {
             }
           }
 
-          ticketIds.add(ticketId);
+          ticketIds.add(ticketId!);
 
           String updatedTicketIds = ticketIds.join(',');
 
@@ -99,7 +104,7 @@ class _TicketPageState extends State<TicketPage> {
               .update({'ticket id': updatedTicketIds});
 
           print('Updated ticket IDs field: $updatedTicketIds');
-          return name;
+          return userName;
         } else {
           print('User data not found.');
         }
@@ -112,7 +117,40 @@ class _TicketPageState extends State<TicketPage> {
     return null;
   }
 
+  Future<List<String>?> fetchInvitedUsersEmails(String roomId) async {
+    try {
+      DocumentSnapshot roomDoc = await FirebaseFirestore.instance
+          .collection('rooms')
+          .doc(roomId)
+          .get();
 
+      if (roomDoc.exists) {
+        Map<String, dynamic>? roomData = roomDoc.data() as Map<String, dynamic>?;
+
+        if (roomData != null) {
+          // Get the invitedUsers list from the room document
+          dynamic invitedUsers = roomData['invitedUsers'];
+
+          if (invitedUsers != null && invitedUsers is List) {
+            // Convert the list of invitedUsers to a list of strings
+            List<String> users = invitedUsers.map((user) => user.toString()).toList();
+
+            // Return the list of invited users' emails
+            return users;
+          } else {
+            print('No invited users found for this room.');
+          }
+        } else {
+          print('Room data not found.');
+        }
+      } else {
+        print('Room document not found.');
+      }
+    } catch (error) {
+      print('Failed to fetch invited users: $error');
+    }
+    return null;
+  }
 
   void generateTableValues() {
     List<int> usedValues = [];
@@ -140,8 +178,8 @@ class _TicketPageState extends State<TicketPage> {
     }
 
     int totalValues = columnCounts.reduce((a, b) => a + b);
-    if (totalValues > 16) {
-      int valuesToRemove = totalValues - 16;
+    if (totalValues > 15) {
+      int valuesToRemove = totalValues - 15;
       for (int k = 0; k < valuesToRemove; k++) {
         int rowIndex = Random().nextInt(3);
         int columnIndex;
@@ -217,11 +255,22 @@ class _TicketPageState extends State<TicketPage> {
                 height: 40,
                 width: 150,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: isJoined ? null : () async {
+                    String roomId = '${userName}-${ticketId?.substring(0, ticketId!.length - 4)}';
+                    await FirebaseFirestore.instance.collection('rooms').doc(
+                        roomId).set({
+                      'roomId': roomId,
+                      'adminUserId': widget.userEmail,
+                      'adminticketId': ticketId,
+                      // Add any other relevant data for the room, such as room settings
+                    });
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => RoomPage(roomId: '12345', invitedUsers: ['User1', 'User2']),
-                      ));// Handle the Tickets button action
+                        context,
+                        MaterialPageRoute(builder: (context) =>
+                            RoomPage(
+                                roomId: roomId, userEmail: widget.userEmail),
+                        ));
+                    // Handle the Tickets button action
                   },
                   child: Text('Create Room'),
                 ),
@@ -229,17 +278,73 @@ class _TicketPageState extends State<TicketPage> {
               Positioned(
                 top: 0,
                 right: 0,
-                child: Container(
-                  height: 40,
-                  width: 150,
-                  child: TextField(
-                    // Add your text field properties here
-                    decoration: InputDecoration(
-                      labelText: 'Enter Room ID',
-                      border: OutlineInputBorder(),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 30,
+                      width: 150, // Adjust the width as needed
+                      child: TextField(
+                        controller: _roomIdController,
+                        // Add your text field properties here
+                        decoration: InputDecoration(
+                          labelText: 'Enter Room ID',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                     ),
-                  ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        String roomId = _roomIdController.text.trim();
+                        if (roomId.isNotEmpty) {
+                          List<String>? emails = await fetchInvitedUsersEmails(roomId);
+                          if (emails != null) {
+                              setState(() {
+                                isJoined = true;
+                                joiners = emails;
+                              });
+                          } else {
+                            print('Failed to fetch invited users\' emails.');
+                          }
+                        } else {
+                          print('no room id');
+                        }
+                        // Implement the Join button logic here
+                      },
+                      child: Text('Join'),
+                    ),
+                  ],
                 ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 0),
+                  isJoined
+                      ? Container(
+                    width: 150,
+                    padding: EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    child: Text(
+                      'Joiners:',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  )
+                      : SizedBox.shrink(), // Show nothing if not joined
+                  if (isJoined)
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: joiners.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(joiners[index]),
+                          );
+                        },
+                      ),
+                    ),
+                ],
               ),
               Center(
                 child: Column(
@@ -284,14 +389,6 @@ class _TicketPageState extends State<TicketPage> {
     );
   }
 
-
-
-
-
-
-
-
-
   List<TableRow> _buildTableRows() {
     List<TableRow> rows = [];
     for (int i = 0; i < 3; i++) {
@@ -305,6 +402,19 @@ class _TicketPageState extends State<TicketPage> {
     }
     return rows;
   }
+
+  // Fetch the invited users' emails from the room ID and update the state
+  Future<void> fetchInvitedUsersAndSetState(String roomId) async {
+    List<String>? emails = await fetchInvitedUsersEmails(roomId);
+    if (emails != null) {
+      setState(() {
+        invitedUsersEmails = emails; // Update the class-level variable with the fetched emails
+      });
+    } else {
+      print('Failed to fetch invited users\' emails.');
+    }
+  }
+
 
   Widget _buildTableCell(
       int cellValue, bool isDoubleTap, int rowIndex, int columnIndex) {
@@ -343,3 +453,5 @@ void _logout(BuildContext context) {
     MaterialPageRoute(builder: (context) => AuthorizationScreen()),
   );
 }
+
+
