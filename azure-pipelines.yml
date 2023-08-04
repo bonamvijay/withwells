@@ -21,13 +21,10 @@ steps:
 
   - script: flutter build apk
     displayName: 'Flutter: Build Android APK'
-    condition: eq(variables['BuildPlatform'], 'Android')  # Run this step only if the build platform is Android
 
   - script: flutter build ios
     displayName: 'Flutter: Build iOS App'
-    condition: eq(variables['BuildPlatform'], 'iOS')  # Run this step only if the build platform is iOS
 
   - script: flutter build web
     displayName: 'Flutter: Build Web App'
-    condition: eq(variables['BuildPlatform'], 'Web')  # Run this step only if the build platform is Web
 
