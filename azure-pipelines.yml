@@ -16,6 +16,7 @@ steps:
       channel: 'beta'
       version: 'latest'
 
+
   - script: flutter pub get
     displayName: 'Flutter: Get Packages'
 
@@ -27,4 +28,12 @@ steps:
 
   - script: flutter build web
     displayName: 'Flutter: Build Web App'
+
+  - task: CopyPublishBuildArtifacts@1
+    inputs:
+      CopyRoot: '$(Agent.BuildDirectory).'
+      Contents: '/*.apk'
+      ArtifactName: 'APK build'
+      ArtifactType: 'FilePath'
+
 
